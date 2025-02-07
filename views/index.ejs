@@ -1,0 +1,77 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Properties</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.64/dist/shoelace/shoelace.css">
+    <style>
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+        
+        .property-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .property-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="container">
+        <h1>All Properties</h1>
+        
+        <!-- Search Form -->
+        <form action="/property/search" method="GET">
+            <input type="text" name="title" placeholder="Search by title" value="<%= searchParams.title %>" />
+            <input type="number" name="price" placeholder="Max Price" value="<%= searchParams.price %>" />
+            <select name="category">
+                <option value="">Select Category</option>
+                <option value="House" <%= searchParams.category === 'House' ? 'selected' : '' %>>House</option>
+                <option value="Apartment" <%= searchParams.category === 'Apartment' ? 'selected' : '' %>>Apartment</option>
+                <option value="Commercial" <%= searchParams.category === 'Commercial' ? 'selected' : '' %>>Commercial</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+        
+        <a href="/property/new" class="btn">Add New Property</a>
+        
+        <div class="property-grid">
+            <% properties.forEach(property => { %>
+                <div class="property-card">
+                    <% if (property.images[0]) { %>
+                        <div class="property-image" 
+                             style="background-image: url('<%= property.images[0].url %>')">
+                        </div>
+                    <% } %>
+                    <div class="card-body">
+                        <h3><%= property.title %></h3>
+                        <p>$<%= property.price.toLocaleString() %></p>
+                        <div class="card-actions">
+                            <a href="/property/<%= property._id %>" class="btn">View Details</a>
+                            <a href="/property/<%= property._id %>/edit" class="btn">Edit</a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

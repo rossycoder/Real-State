@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>List New Property | Luxury Estates</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Container and Form Styles */
+    .property-form-container {
+      max-width: 1200px;
+      margin: 100px auto 50px;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .form-title {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 2rem;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+    .form-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: #f0a500;
+    }
+    .property-form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .input-field {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    .input-field:focus {
+      border-color: #f0a500;
+      outline: none;
+    }
+    .file-upload-container {
+      border: 2px dashed #e0e0e0;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+    .file-upload-container:hover {
+      border-color: #f0a500;
+    }
+    .file-upload-container.dragover {
+      border-color: #f0a500;
+      background: rgba(212, 175, 55, 0.05);
+    }
+    .upload-icon {
+      font-size: 2rem;
+      color: #f0a500;
+      margin-bottom: 1rem;
+    }
+    .preview-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .image-preview {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 120px;
+    }
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .remove-image {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .submit-btn {
+      background: #f0a500;
+      color: #333;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+    }
+    @media (max-width: 768px) {
+      .property-form {
+        grid-template-columns: 1fr;
+      }
+      .property-form-container {
+        margin: 80px 15px 30px;
+        padding: 1.5rem;
+      }
+      .form-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="property-form-container">
+    <h1 class="form-title">List New Property</h1>
+    <form class="property-form" action="/property" method="POST" enctype="multipart/form-data">
+      <!-- Basic Information -->
+      <div class="form-group full-width">
+        <label for="title">Property Title</label>
+        <input type="text" id="title" name="title" class="input-field" placeholder="Enter property title" required>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Price ($)</label>
+        <input type="number" id="price" name="price" class="input-field" placeholder="Enter price" min="0" required>
+      </div>
+
+      <div class="form-group">
+        <label for="sqft">Square Feet</label>
+        <input type="number" id="sqft" name="sqft" class="input-field" placeholder="Enter square footage" min="0">
+      </div>
+
+      <!-- Property Details -->
+      <div class="form-group">
+        <label for="bedrooms">Bedrooms</label>
+        <input type="number" id="bedrooms" name="bedrooms" class="input-field" placeholder="Enter number of bedrooms" min="0">
+      </div>
+
+      <div class="form-group">
+        <label for="bathrooms">Bathrooms</label>
+        <input type="number" id="bathrooms" name="bathrooms" class="input-field" placeholder="Enter number of bathrooms" min="0">
+      </div>
+
+      <!-- Location -->
+      <div class="form-group full-width">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" class="input-field" placeholder="Enter property address" required>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group full-width">
+        <label for="description">Property Description</label>
+        <textarea id="description" name="description" class="input-field" rows="4" placeholder="Describe your property..."></textarea>
+      </div>
+      <div class="form-group full-width">
+        <label for="category">Category</label>
+        <select id="category" name="category" class="input-field">
+          <% categories.forEach(cat => { %>
+            <option value="<%= cat %>"><%= cat %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="form-group full-width">
+        <label>Property Images (Please upload exactly 3 or 5 images)</label>
+        <div class="file-upload-container" id="image-upload">
+          <div class="upload-icon">
+            <i class="fas fa-camera-retro"></i>
+          </div>
+          <p>Drag & drop images here or click to upload</p>
+          <input type="file" name="images" id="images" multiple accept="image/*" hidden>
+          <div class="preview-container" id="image-preview"></div>
+        </div>
+      </div>
+
+      <!-- Virtual Tour -->
+      <div class="form-group full-width">
+        <label>Virtual Tour Video</label>
+        <div class="file-upload-container">
+          <div class="upload-icon">
+            <i class="fas fa-video"></i>
+          </div>
+          <p>Upload virtual tour video (MP4, MOV)</p>
+          <input type="file" name="virtualTour" accept="video/mp4,video/quicktime" hidden>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-group full-width" style="text-align: center;">
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-paper-plane"></i> List Property
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    // Image Upload Handling
+    const imageUpload = document.getElementById('image-upload');
+    const fileInput = document.getElementById('images');
+    const previewContainer = document.getElementById('image-preview');
+
+    // Drag and drop functionality
+    imageUpload.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      imageUpload.classList.add('dragover');
+    });
+    imageUpload.addEventListener('dragleave', () => {
+      imageUpload.classList.remove('dragover');
+    });
+    imageUpload.addEventListener('drop', (e) => {
+      e.preventDefault();
+      imageUpload.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      handleFiles(files);
+    });
+    // Click to upload
+    imageUpload.addEventListener('click', () => fileInput.click());
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+      previewContainer.innerHTML = '';
+      for (const file of files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const preview = document.createElement('div');
+          preview.className = 'image-preview';
+          preview.innerHTML = `
+            <img src="${e.target.result}" alt="Preview">
+            <button class="remove-image" onclick="removePreview(this)">&times;</button>
+          `;
+          previewContainer.appendChild(preview);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removePreview(button) {
+      button.parentElement.remove();
+      // Note: In production you should update the file input’s FileList accordingly.
+    }
+
+    // Basic Form Validation (client-side)
+    document.querySelector('form').addEventListener('submit', (e) => {
+      const price = document.getElementById('price').value;
+      if (price < 10000) {
+        alert('Price must be at least $10,000');
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Estates | Premium Properties</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style1.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">LuxuryEstates</div>
+            <div class="mobile-menu"><i class="fas fa-bars"></i></div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="#why-us">Why Us</a>
+                <a href="#properties">Properties</a>
+                <a href="#agents">Agents</a>
+                <% if (user) { %>
+                <a href="/property/new">Create a List </a>
+                <% } %>
+               
+                
+                    <% if (user) { %>
+                        <span id="span">Welcome, <%= user.name %>!</span>
+                        <a href="/auth/logout" >Logout</a>
+                    <% } else { %>
+                        <a href="/auth/login" >Sign In</a>
+                        <a href="/auth/register" >Register</a>
+                    <% } %>
+                
+            </div>
+    
+            <!-- User Authentication -->
+           
+        </div>
+    </nav>
+    

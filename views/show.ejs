@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= property.title %> | Luxury Stay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    /* Root Variables */
+    :root {
+      --primary-color:  #ffc107;;
+      --secondary-color: #008489;
+      --text-color: #484848;
+      --light-gray: #f7f7f7;
+    }
+    /* Global Styles */
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--text-color);
+      background: var(--light-gray);
+    }
+    header, footer {
+      background: #fff;
+    }
+    /* Property Header */
+    .property-header {
+      padding: 2rem 0;
+      background: #fff;
+      border-bottom: 1px solid #eaeaea;
+    }
+    .property-header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    .property-header p.lead {
+      font-size: 1rem;
+      color: #717171;
+    }
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .gallery-item {
+      height: 300px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .gallery-item:hover {
+      transform: scale(1.02);
+    }
+    /* Details Section */
+    .details-section {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .amenities-list {
+      list-style: none;
+      padding-left: 0;
+      columns: 2;
+    }
+    .amenities-list li {
+      margin-bottom: 0.5rem;
+    }
+    /* Booking Card */
+    .booking-card {
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 8px;
+      padding: 1.5rem;
+      position: sticky;
+      top: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    /* Review Section */
+    .review-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .review-card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: transform 0.2s;
+    }
+    .review-card:hover {
+      transform: translateY(-2px);
+    }
+    .avatar-initial {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .star-rating-input .form-check-input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .star-rating-input .form-check-label {
+      cursor: pointer;
+      color: #e4e5e9;
+      transition: color 0.2s;
+    }
+    .star-rating-input input:checked ~ .form-check-label,
+    .star-rating-input input:hover ~ .form-check-label,
+    .star-rating-input .form-check-label:hover {
+      color: #ffc107;
+    }
+    .fa-star-empty {
+      color: #e4e5e9;
+    }
+    /* Leaflet Map Styles */
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <!-- Property Header -->
+  <section class="property-header container py-4">
+    <div class="row">
+      <div class="col-md-8">
+        <br><br>
+        <h1 class="display-4"><%= property.title %></h1>
+        <p class="lead">
+          <%= property.bedrooms %> Bedrooms · <%= property.bathrooms %> Bathrooms · <%= property.sqft %> SQFT
+        </p>
+        <h3 class="text-primary">$<%= property.price.toLocaleString() %> <small class="text-muted">/ night</small></h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container py-4">
+    <!-- Image Gallery -->
+    <div class="gallery-grid">
+      <% property.images.forEach((image) => { %>
+        <div class="gallery-item" 
+             style="background-image: url('<%= image.url %>')"
+             onclick="openLightbox('<%= image.url %>')">
+        </div>
+      <% }); %>
+    </div>
+
+    <!-- Property Details & Booking -->
+    <div class="row">
+      <!-- Details Column -->
+      <div class="col-lg-8">
+        <div class="details-section mb-4">
+          <h2>About this property</h2>
+          <p class="lead"><%= property.description %></p>
+
+          <h3 class="mt-4">Amenities</h3>
+          <ul class="amenities-list">
+            <% if(property.amenities && property.amenities.length) { %>
+              <% property.amenities.forEach(amenity => { %>
+                <li><%= amenity %></li>
+              <% }); %>
+            <% } else { %>
+              <li>No amenities listed.</li>
+            <% } %>
+          </ul>
+        </div>
+
+        <!-- Reviews Section -->
+        <section class="review-section">
+          <h2 class="mb-4">Guest Reviews</h2>
+          <% if (property.reviews.length === 0) { %>
+            <div class="text-center py-4">
+              <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+              <p class="text-muted">No reviews yet. Be the first to share your experience!</p>
+            </div>
+          <% } else { %>
+            <div class="row">
+              <% property.reviews.forEach(review => { %>
+                <div class="col-md-12 mb-3">
+                  <div class="review-card">
+                    <div class="d-flex align-items-center mb-3">
+                      <div class="avatar-initial">
+                        <%= review.user.name.charAt(0).toUpperCase() %>
+                      </div>
+                      <div class="ms-3">
+                        <h5 class="mb-0"><%= review.user.name %></h5>
+                        <div class="star-rating">
+                          <% for(let i = 0; i < 5; i++) { %>
+                            <i class="fas fa-star<%= i < review.rating ? '' : '-empty' %> text-warning"></i>
+                          <% } %>
+                        </div>
+                      </div>
+                      <small class="text-muted ms-auto"><%= review.formattedDate %></small>
+                    </div>
+                    <p class="mb-0"><%= review.comment %></p>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+
+          <% if (currentUser) { %>
+            <div class="review-form mt-5">
+              <h4 class="mb-4">Write a Review</h4>
+              <form action="/properties/<%= property._id %>/reviews" method="POST">
+                <div class="mb-3">
+                  <label class="form-label">Rating</label>
+                  <div class="star-rating-input">
+                    <% for(let i = 5; i >= 1; i--) { %>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" 
+                               type="radio" 
+                               name="rating" 
+                               id="star<%= i %>" 
+                               value="<%= i %>" 
+                               required>
+                        <label class="form-check-label" for="star<%= i %>">
+                          <% for(let j = 0; j < i; j++) { %>
+                            <i class="fas fa-star"></i>
+                          <% } %>
+                        </label>
+                      </div>
+                    <% } %>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <textarea name="comment" 
+                            class="form-control" 
+                            rows="4" 
+                            placeholder="Share your experience..." 
+                            required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-paper-plane me-2"></i>Submit Review
+                </button>
+              </form>
+            </div>
+          <% } else { %>
+            <div class="alert alert-info mt-4">
+              <i class="fas fa-info-circle me-2"></i>
+              <a href="/login" class="alert-link">Sign in</a> to leave a review
+            </div>
+          <% } %>
+        </section>
+
+        <!-- Map Section Using Leaflet and OpenStreetMap -->
+        <div class="details-section">
+          <h2>Location</h2>
+          <p><%= property.location %></p>
+          <div id="map"></div>
+        </div>
+      </div>
+
+      <!-- Booking Column -->
+      <div class="col-lg-4">
+        <div class="booking-card">
+          <h4 class="mb-3">Add dates for prices</h4>
+          <!-- The form is handled via JavaScript -->
+          <form id="booking-form">
+            <input type="hidden" name="propertyId" value="<%= property._id %>">
+            <div class="mb-3 date-picker-group">
+              <label class="form-label">Check-in</label>
+              <input type="date" class="form-control" name="checkin" required placeholder="Add date">
+            </div>
+            <div class="mb-3 date-picker-group">
+              <label class="form-label">Check-out</label>
+              <input type="date" class="form-control" name="checkout" required placeholder="Add date">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Guests</label>
+              <input type="number" class="form-control" name="guests" min="1" value="1" required>
+            </div>
+            <button type="submit" class="btn btn-#ffc107 w-100" id="checkout-button">
+              <i class="fas fa-credit-card me-2"></i>Check Availability &amp; Pay
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Lightbox Script for Image Gallery -->
+  <script>
+    function openLightbox(url) {
+      window.open(url, '_blank', 'width=1200,height=800');
+    }
+  </script>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize Leaflet map with a default center.
+    // If your property includes specific coordinates (e.g., property.locationCoordinates),
+    // then use them instead.
+    var map = L.map('map').setView([51.505, -0.09], 13);
+
+    // Add OpenStreetMap tiles.
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // If property coordinates are available, update the map view and add a marker.
+    <% if(property.locationCoordinates && property.locationCoordinates.length === 2) { %>
+      var propertyCoords = [<%= property.locationCoordinates[0] %>, <%= property.locationCoordinates[1] %>];
+      map.setView(propertyCoords, 14);
+      L.marker(propertyCoords).addTo(map)
+        .bindPopup('<%= property.title %>')
+        .openPopup();
+    <% } %>
+  </script>
+
+  <!-- Stripe and Checkout Script -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    // Replace with your actual Stripe publishable key
+    const stripe = Stripe('YOUR_STRIPE_PUBLISHABLE_KEY');
+
+    const form = document.getElementById('booking-form');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      const checkin = formData.get('checkin');
+      const checkout = formData.get('checkout');
+      const guests = formData.get('guests');
+      const propertyId = formData.get('propertyId');
+
+      // Calculate the number of nights between check-in and check-out.
+      const nights = (new Date(checkout) - new Date(checkin)) / (1000 * 60 * 60 * 24);
+      if(nights <= 0) {
+        alert('Check-out must be after check-in.');
+        return;
+      }
+
+      // Calculate total amount in cents.
+      const pricePerNight = <%= property.price %>;
+      const amount = Math.round(pricePerNight * nights * 100);
+
+      try {
+        const response = await fetch('/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            propertyId,
+            checkin,
+            checkout,
+            guests,
+            amount
+          })
+        });
+    
+        const session = await response.json();
+        if (session.error) {
+          alert(session.error);
+          return;
+        }
+    
+        const result = await stripe.redirectToCheckout({
+          sessionId: session.id,
+        });
+    
+        if (result.error) {
+          alert(result.error.message);
+        }
+      } catch (error) {
+        console.error('Checkout session creation failed:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    });
+  </script>
+
+  <%- include('partials/footer') %>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

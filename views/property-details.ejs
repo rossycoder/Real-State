@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= property ? 'Edit' : 'Create' %> Property</title>
+    <style>
+        .image-preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .image-preview {
+            position: relative;
+            aspect-ratio: 4/3;
+        }
+        .delete-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <h1><%= property ? 'Edit' : 'Create' %> Property</h1>
+        
+        <form method="POST" enctype="multipart/form-data">
+            <!-- Existing Fields -->
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" name="title" value="<%= property?.title %>" required>
+            </div>
+
+            <!-- Image Upload Section -->
+            <div class="form-group">
+                <label>Property Images</label>
+                <div class="image-preview-container">
+                    <% if (property?.images) { %>
+                        <% property.images.forEach((image, index) => { %>
+                            <div class="image-preview">
+                                <img src="<%= image.url %>" alt="Image <%= index + 1 %>">
+                                <button type="button" class="delete-image" 
+                                    onclick="deleteImage('<%= property._id %>', <%= index %>)">×</button>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+                <input type="file" name="images" multiple accept="image/*">
+            </div>
+
+            <!-- Virtual Tour Upload -->
+            <div class="form-group">
+                <label>Virtual Tour (360° Image/Video)</label>
+                <% if (property?.virtualTour) { %>
+                    <div class="current-tour">
+                        <p>Current Virtual Tour: 
+                            <a href="<%= property.virtualTour.url %>" target="_blank">View</a>
+                            <button type="button" onclick="deleteVirtualTour('<%= property._id %>')">Remove</button>
+                        </p>
+                    </div>
+                <% } %>
+                <input type="file" name="virtualTour" accept="image/*,video/*">
+            </div>
+
+            <button type="submit" class="btn">Save Property</button>
+        </form>
+    </main>
+
+    <script>
+        async function deleteImage(propertyId, index) {
+            if (confirm('Are you sure you want to delete this image?')) {
+                const response = await fetch(`/properties/${propertyId}/images/${index}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) location.reload();
+            }
+        }
+
+        async function deleteVirtualTour(propertyId) {
+            if (confirm('Are you sure you want to remove the virtual tour?')) {
+                const response = await fetch(`/properties/${propertyId}/virtualTour`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
