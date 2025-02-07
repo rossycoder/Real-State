@@ -1,15 +1,16 @@
 {
   "name": "real-state",
   "version": "1.0.0",
-  "main": "index.js",
- "scripts": {
-  "start": "node app.js"
-}
-,
+  "description": "Real Estate App",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
