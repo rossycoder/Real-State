@@ -11,7 +11,7 @@ router.use(express.urlencoded({ extended: true }));
 // =====================
 
 // Render the registration form
-router.get("/register", (req, res) => res.render("register"));
+router.get("/register", (req, res) => res.render("Register"));
 
 // Process the registration form
 router.post("/register", async (req, res) => {
