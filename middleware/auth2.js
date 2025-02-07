@@ -38,9 +38,7 @@ const propertyValidationSchema = Joi.object({
   bathrooms: Joi.number().optional(),
   sqft: Joi.number().optional(),
   category: Joi.string().valid('Villa', 'Apartment', 'Mansion').required(),
-  owner: Joi.string().required().messages({
-    'string.empty': 'Owner is required',
-  }),
+  
   images: Joi.array().items(
     Joi.object({
       url: Joi.string().uri().required(),
