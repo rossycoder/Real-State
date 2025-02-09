@@ -11,11 +11,7 @@ router.use(express.urlencoded({ extended: true }));
 // =====================
 
 // Render the registration form
-<<<<<<< HEAD
-router.get("/register", (req, res) => res.render("Register.ejs"));
-=======
 router.get("/register", (req, res) => res.render("Register"));
->>>>>>> 9eff54cb532732ec534aac87f92aa2693d057c7b
 
 // Process the registration form
 router.post("/register", async (req, res) => {
