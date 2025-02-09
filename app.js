@@ -24,10 +24,13 @@ const Webbook = require('./routes/book');
 // Initialize Express App
 const app = express();
 
-// Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/real-state")
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch(err => console.log("❌ MongoDB Connection Error:", err));
+mongoose.connect(process.env.DB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("MongoDB connected successfully"))
+.catch(err => console.error("MongoDB connection error:", err));
+
 
 // Middleware
 app.set("view engine", "ejs");
