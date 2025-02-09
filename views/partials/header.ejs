@@ -9,31 +9,43 @@
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">LuxuryEstates</div>
-            <div class="mobile-menu"><i class="fas fa-bars"></i></div>
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="#why-us">Why Us</a>
-                <a href="#properties">Properties</a>
-                <a href="#agents">Agents</a>
-                <% if (user) { %>
-                <a href="/property/new">Create a List </a>
-                <% } %>
-               
-                
-                    <% if (user) { %>
-                        <span id="span">Welcome, <%= user.name %>!</span>
-                        <a href="/auth/logout" >Logout</a>
-                    <% } else { %>
-                        <a href="/auth/login" >Sign In</a>
-                        <a href="/auth/register" >Register</a>
-                    <% } %>
-                
-            </div>
-    
-            <!-- User Authentication -->
-           
+      <div class="nav-container">
+        <div class="logo">LuxuryEstates</div>
+        <div class="mobile-menu"><i class="fas fa-bars"></i></div>
+        <div class="nav-links">
+          <a href="/">Home</a>
+          <a href="/#why-us">Why Us</a>
+          <a href="/#properties">Properties</a>
+          <a href="/#agents">Agents</a>
+          <% if (user) { %>
+            <a href="/property/new">Create a List</a>
+            <span id="span">Welcome, <%= user.name %>!</span>
+            <a href="/auth/logout">Logout</a>
+          <% } else { %>
+            <a href="/auth/login">Sign In</a>
+            <a href="/auth/register">Register</a>
+          <% } %>
         </div>
+      </div>
     </nav>
     
+    <script>
+        // Toggle the mobile menu when the icon is clicked
+        document.querySelector('.mobile-menu').addEventListener('click', function (e) {
+          const navLinks = document.querySelector('.nav-links');
+          navLinks.classList.toggle('show');
+          this.classList.toggle('active');
+          e.stopPropagation();
+        });
+        
+    
+        // Hide the mobile menu if clicking outside of it
+        document.addEventListener('click', function (e) {
+          const navLinks = document.querySelector('.nav-links');
+          const mobileMenu = document.querySelector('.mobile-menu');
+          if (!navLinks.contains(e.target) && !mobileMenu.contains(e.target)) {
+            navLinks.classList.remove('show');
+            mobileMenu.classList.remove('active');
+          }
+        });
+      </script>

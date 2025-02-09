@@ -17,7 +17,14 @@ const propertySchema = new mongoose.Schema({
   owner: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User',
-    required: true 
+    required: [true, 'Property must have an owner'],
+    validate: {
+      validator: async function(v) {
+        const user = await mongoose.model('User').findById(v);
+        return user !== null;
+      },
+      message: 'Invalid owner reference'
+    }
   },
   images: [{
     url: String,

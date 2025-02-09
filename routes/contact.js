@@ -1,6 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const router = express.Router();
+const { isLoggedIn } = require('../middleware/auth2');
 require('dotenv').config();
 
 // Create transporter
@@ -25,7 +26,7 @@ transporter.verify((error) => {
 });
 
 // Contact route to handle the contact form submission
-router.post('/contact-agent', (req, res) => {
+router.post('/contact-agent',isLoggedIn, (req, res) => {
     const { agentName, userEmail, message } = req.body;
 
     // Prepare email content

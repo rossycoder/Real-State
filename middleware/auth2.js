@@ -24,6 +24,7 @@ module.exports.isOwner = async (req, res, next) => {
 };
 
 // Joi Validation Schema for Property
+// Updated Joi schema with owner field
 const propertyValidationSchema = Joi.object({
   title: Joi.string().required().messages({
     'string.empty': 'Title is required',
@@ -38,7 +39,10 @@ const propertyValidationSchema = Joi.object({
   bathrooms: Joi.number().optional(),
   sqft: Joi.number().optional(),
   category: Joi.string().valid('Villa', 'Apartment', 'Mansion').required(),
-  
+  owner: Joi.string().hex().length(24).required().messages({ // Add owner field
+    'string.hex': 'Invalid owner ID format',
+    'string.length': 'Owner ID must be 24 characters'
+  }), // Explicitly handle owner field
   images: Joi.array().items(
     Joi.object({
       url: Joi.string().uri().required(),
@@ -46,7 +50,7 @@ const propertyValidationSchema = Joi.object({
     })
   ).optional(),
   reviews: Joi.array().items(Joi.string().hex().length(24)).optional(),
-});
+}).options({ allowUnknown: false });
 
 // Middleware for Joi Validation
 async function validateProperty(req, res, next) {

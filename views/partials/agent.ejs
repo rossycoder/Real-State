@@ -1,86 +1,110 @@
-<section class="agent-section" id="agents">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Our Agents</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+ 
+</head>
+<body>
+
+  <!-- Agents Section -->
+  <section class="agent-section" id="agents">
     <h2 class="section-title">Our Expert Agents</h2>
     <div class="agent-profiles">
-        <!-- Agent 1 -->
-        <div class="agent-card">
-            <img src="agent1.jpg" alt="Agent John" class="agent-photo">
-            <h3>John Smith</h3>
-            <p>Senior Property Consultant</p>
-            <p>15+ Years Experience</p>
-            <button class="search-btn" onclick="openContactModal('John Smith', 'johnsmith@example.com')">Contact Agent</button>
+      <!-- Agent 1 -->
+      <div class="agent-card">
+        <div class="image-container">
+          <img src="./assets/jonas-svidras-jDDheOd-8XI-unsplash.jpg" alt="Agent John" class="agent-photo">
         </div>
-        
-        <!-- Agent 2 -->
-        <div class="agent-card">
-            <img src="./uploads/images.png" alt="Agent Sarah" class="agent-photo">
-            <h3>Sarah Johnson</h3>
-            <p>Luxury Home Specialist</p>
-            <p>12+ Years Experience</p>
-            <button class="search-btn" onclick="openContactModal('Sarah Johnson', 'rozeena031@gmail.com')">Contact Agent</button>
+        <h3>John Smith</h3>
+        <p>Senior Property Consultant</p>
+        <p>15+ Years Experience</p>
+        <button class="search-btn" onclick="openContactModal('John Smith', 'johnsmith@example.com')">Contact Agent</button>
+      </div>
+      
+      <!-- Agent 2 -->
+      <div class="agent-card">
+        <div class="image-container">
+          <img src="./assets/jonas-svidras-jDDheOd-8XI-unsplash.jpg" alt="Agent Sarah" class="agent-photo">
         </div>
-    </div>
-</section>
-
-<!-- Modal for Contact Form -->
-<div id="contactModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeContactModal()">×</span>
-        <h2>Contact Agent</h2>
-        <form id="contactForm">
-            <input type="text" id="agentName" name="agentName" placeholder="Agent Name" readonly required>
-            <input type="email" id="userEmail" name="userEmail" placeholder="Your Email" required>
-            <textarea id="message" name="message" placeholder="Your Message" required></textarea>
-            <button type="submit">Send Message</button>
-        </form>
-    </div>
-</div>
-
-<script>
-    // Open the contact modal and pre-fill agent details
-    function openContactModal(agentName, agentEmail) {
-        document.getElementById('agentName').value = agentName;
-        document.getElementById('contactModal').style.display = 'block';
-    }
-
-    // Close the contact modal
-    function closeContactModal() {
-        document.getElementById('contactModal').style.display = 'none';
-    }
-
-    // Handle the form submission
-    document.getElementById('contactForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const agentName = document.getElementById('agentName').value;
-        const userEmail = document.getElementById('userEmail').value;
-        const message = document.getElementById('message').value;
-
-        // Send the data to the server
-        fetch('/contact-agent', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ agentName, userEmail, message })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert('Message sent to agent!');
-            closeContactModal(); // Automatically close modal after sending the message
-        })
-        .catch(error => {
-            alert('Failed to send message. Please try again.');
-            console.error(error);  // Log the error to get more details
-        });
-    });
-</script>
-
+        <h3>Sarah Johnson</h3>
+        <p>Luxury Home Specialist</p>
+        <p>12+ Years Experience</p>
+        <button class="search-btn" onclick="openContactModal('Sarah Johnson', 'rozeena031@gmail.com')">Contact Agent</button>
 <style>
+    
+</style>      </div>
+    </div>
+  </section>
+
+  <!-- Modal for Contact Form -->
+  <div id="contactModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeContactModal()">×</span>
+      <h2>Contact Agent</h2>
+      <form id="contactForm">
+        <!-- Agent name (read-only) -->
+        <input type="text" id="agentName" name="agentName" placeholder="Agent Name" readonly required>
+        <!-- Hidden field for agent email -->
+        <input type="hidden" id="agentEmail" name="agentEmail">
+        <!-- User's email -->
+        <input type="email" id="userEmail" name="userEmail" placeholder="Your Email" required>
+        <!-- Message -->
+        <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Open modal and set both agent name and agent email
+    function openContactModal(agentName, agentEmail) {
+      document.getElementById('agentName').value = agentName;
+      document.getElementById('agentEmail').value = agentEmail; // Set hidden field value
+      document.getElementById('contactModal').style.display = 'block';
+    }
+
+    // Close the modal
+    function closeContactModal() {
+      document.getElementById('contactModal').style.display = 'none';
+    }
+
+    // Listen for form submission and send contact request
+    document.getElementById('contactForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      
+      // Retrieve form values
+      const agentName = document.getElementById('agentName').value;
+      const agentEmail = document.getElementById('agentEmail').value; // Hidden field value
+      const userEmail = document.getElementById('userEmail').value;
+      const message = document.getElementById('message').value;
+      
+      // Send a POST request to the backend
+      fetch('/contact-agent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ agentName, agentEmail, userEmail, message })
+      })
+      .then(response => response.json())
+      .then(data => {
+          alert('Message sent to agent!');
+          closeContactModal();
+      })
+      .catch(error => {
+          alert('Failed to send message. Please try again.');
+          console.error(error);
+      });
+    });
+  </script>
+  <style>
+    
     /* Modal Styles */
     .modal {
         display: none;
         position: fixed;
-        z-index: 1;
+        z-index: 1000;
         left: 0;
         top: 0;
         width: 100%;
@@ -92,9 +116,10 @@
     .modal-content {
         background-color: white;
         margin: 10% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 50%;
+        padding: 25px;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 8px;
         position: relative;
     }
 
@@ -103,36 +128,67 @@
         font-size: 28px;
         font-weight: bold;
         position: absolute;
-        top: 5px;
+        top: 10px;
         right: 20px;
     }
 
-    .close-btn:hover,
-    .close-btn:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
+    /* Contact Form Styles */
+    #contactForm {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
 
-    /* Contact form styles */
-    input, textarea {
+    input, textarea, button {
         width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
+        padding: 12px;
+        border: 1px solid #ddd;
         border-radius: 5px;
-        border: 1px solid #ccc;
+        font-size: 16px;
     }
 
     button {
         background-color: #3498db;
         color: white;
         border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s;
     }
 
     button:hover {
         background-color: #2980b9;
     }
-</style>
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .agent-card {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .modal-content {
+            margin: 20% auto;
+            padding: 15px;
+        }
+
+        input, textarea, button {
+            padding: 10px;
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .image-container {
+            width: 150px;
+            height: 150px;
+        }
+
+        .modal-content {
+            width: 95%;
+            margin: 30% auto;
+        }
+    }
+  </style>
+
+</body>
+</html>

@@ -25,7 +25,7 @@ const Webbook = require('./routes/book');
 const app = express();
 
 // Connect to MongoDB
-mongoose.connect(process.env.DB_URI)
+mongoose.connect("mongodb://localhost:27017/real-state")
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch(err => console.log("❌ MongoDB Connection Error:", err));
 
@@ -130,13 +130,23 @@ app.use('/contact', Contact);
 app.use('/webhook', Webbook);
 
 // Home Route
+// Update your home route to populate owner
 app.get("/", async (req, res) => {
   try {
-    const properties = await Property.find(); // Fetch properties from DB
-    res.render("real state", { user: req.user, properties });
+      const properties = await Property.find().populate('owner');
+     
+      res.render("real state", { 
+          user: req.user, 
+        
+          properties,
+        
+      });
   } catch (error) {
-    console.error("Error fetching properties:", error);
-    res.render("real state", { user: req.user, properties: [] }); // Empty array if error
+      console.error("Error fetching properties:", error);
+      res.render("real state", { 
+          user: req.user, 
+          properties: [] 
+      });
   }
 });
 
